@@ -3,7 +3,7 @@
 // put your own value below!
 
 const apiKey = '4T9c5ZHefudbc3qbGzj6z04fQulVPyOe10PBLF0U'; 
-const searchURL = 'https://developer.nps.gov/api/v1/parks?parkCode=acad&api_key=4T9c5ZHefudbc3qbGzj6z04fQulVPyOe10PBLF0U';
+const searchURL = 'https://developer.nps.gov/api/v1/parks';
 
 function formatQueryParams(params) {
   const queryItems = Object.keys(params)
@@ -16,28 +16,33 @@ function displayResults(responseJson) {
   console.log(responseJson);
   $('#results-list').empty();
   // iterate through the items array
-  for (let i = 0; i < responseJson.items.length; i++){
+  for (let i = 0; i < responseJson.data.length; i++){
+    let park = responseJson.data[i];
     // for each video object in the items 
     //array, add a list item to the results 
     //list with the video title, description,
     //and thumbnail
+    
     $('#results-list').append(
-      `<li><h3>${}</h3>
-      <p>${}</p>
-      <img src='${}'>
+      `<li><h3>${park.fullName}</h3>
+      <p>${park.description}</p>
+      <h3>${park.addresses}</h3>
+      <a href='${park.url}'>${park.url}</a>
       </li>`
-    )};
+    )
+// Full name
+// Description
+// Website URL
+}
   //display the results section  
   $('#results').removeClass('hidden');
 };
 
-function (query, maxResults=10) {
+function getResults(query, maxResults=10) {
   const params = {
-    key: apiKey,
-    q: query,
-    part: '',
-    maxResults,
-    type: ''
+    api_key: apiKey,
+    stateCode: query,
+    limit: maxResults,
   };
   const queryString = formatQueryParams(params)
   const url = searchURL + '?' + queryString;
@@ -64,7 +69,7 @@ function watchForm() {
     event.preventDefault();
     const searchTerm = $('#js-search-term').val();
     const maxResults = $('#js-max-results').val();
-    getYouTubeVideos(searchTerm, maxResults);
+    getResults(searchTerm, maxResults);
   });
 }
 
